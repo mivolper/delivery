@@ -322,7 +322,6 @@ namespace delivery.USC
             {
                 MessageBox.Show(ex.Message);
             }
-
         }
         #endregion
 
