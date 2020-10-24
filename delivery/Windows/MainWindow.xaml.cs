@@ -1,0 +1,134 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
+
+namespace delivery.Windows
+{
+    /// <summary>
+    /// Interaction logic for MainWindow.xaml
+    /// </summary>
+    public partial class MainWindow : Window
+    {
+        public static MainWindow frm;
+        DataTable Dt = new DataTable();
+        Flags.flags flag = new Flags.flags();
+        Linq.DbDataContext Db;
+
+
+        static void frm_Closed(object sender, EventArgs e)
+        {
+            frm = null;
+        }
+        public static MainWindow GetMainForm
+        {
+            get
+            {
+                if (frm == null)
+                {
+                    frm = new MainWindow();
+                    frm.Closed += new EventHandler(frm_Closed);
+                }
+                return frm;
+            }
+        }
+
+        public MainWindow()
+        {
+            InitializeComponent();
+            if (frm == null)
+                frm = this;
+        }
+
+        private void btn_city_Selected(object sender, RoutedEventArgs e)
+        {
+            USC.city city = new USC.city();
+            grdUSC.Children.Clear();
+            grdUSC.Children.Add(city);
+        }
+
+        private void Window_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+
+        }
+
+       
+
+        private void grdUSC_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            try
+            {
+                if (GridMenu.Width == 260)
+                {
+                    btnCloseMenu.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
+        }
+
+        private void btnShutDown_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
+        }
+
+        private void btn_Minimized_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                WindowState = WindowState.Minimized;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void btnOpenMenu_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Button btn = (Button)sender;
+                if (btn.Name == "btnCloseMenu")
+                {
+                    btnCloseMenu.Visibility = Visibility.Collapsed;
+                    btnOpenMenu.Visibility = Visibility.Visible;
+
+                }
+                else
+                {
+                    btnCloseMenu.Visibility = Visibility.Visible;
+                    btnOpenMenu.Visibility = Visibility.Collapsed;
+
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+       
+    }
+}
