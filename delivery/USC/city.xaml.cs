@@ -24,7 +24,7 @@ namespace delivery.USC
     {
         Flags.flags flag = new Flags.flags();
         Linq.DbDataContext Db;
-        DataTable Dt = new DataTable(); DataTable DtCity = new DataTable();
+        DataTable Dt = new DataTable(); DataTable DtCity = new DataTable(); DataTable Dtsearch = new DataTable();
         Button[] btn = new Button[3]; Button[] btnCity = new Button[3];
         bool isnew = false;
         UIElement[] txt = new UIElement[5];
@@ -50,7 +50,7 @@ namespace delivery.USC
                 DtCity = flag.Fill_DataGrid_join("SELECT [ID_City],[CityName],[PriceMen],[PriceWomen], ProvinceName,[Days],ROW_NUMBER() OVER(ORDER BY[ID_City]) AS RowNum1 FROM [dbo].[Cities] inner join Provinces on Provinces.ID_Province = Cities.ID_Province where Cities.Exist = 'true'");
                 dgvCity.DataContext = DtCity;
 
-                flag.Fill_ComboBox(Dt, cmbProvince, 1);
+                //flag.Fill_ComboBox(Dt, cmbProvince, 1);
             }
             catch (Exception ex)
             {
@@ -325,5 +325,24 @@ namespace delivery.USC
         }
         #endregion
 
+        private void cmbProvince_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            try
+            {
+                cmbProvince.IsDropDownOpen = true;
+                Db = new Linq.DbDataContext();
+                //cmbProvince.Items.Clear();
+                Dtsearch = flag.Fill_DataGrid_join("SELECT ProvinceName FROM [dbo].[Cities] inner join Provinces on Provinces.ID_Province = Cities.ID_Province where Cities.Exist = 'true'and ProvinceName like '%'+ '" + cmbProvince.Text + "' +'%'");
+                string[] st = new string[Dtsearch.Rows.Count];
+                //Dtsearch.Rows.CopyTo(st,0);
+                Dtsearch.Columns.CopyTo(st, 0);
+                cmbProvince.ItemsSource = st;
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
     }
 }
