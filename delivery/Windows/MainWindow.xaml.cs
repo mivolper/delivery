@@ -129,6 +129,39 @@ namespace delivery.Windows
             }
         }
 
-       
+        private void btnCustomer_Selected(object sender, RoutedEventArgs e)
+        {
+            USC.customer customer = new USC.customer();
+            grdUSC.Children.Clear();
+            grdUSC.Children.Add(customer);
+        }
+
+        private void btn_delegate_Selected(object sender, RoutedEventArgs e)
+        {
+            USC.@delegate @delegate = new USC.@delegate();
+            grdUSC.Children.Clear();
+            grdUSC.Children.Add(@delegate);
+        }
+
+        private void btn_order_Selected(object sender, RoutedEventArgs e)
+        {
+            USC.Order order = new USC.Order();
+            grdUSC.Children.Clear();
+            grdUSC.Children.Add(order);
+        }
+
+        private void btn_Movement_Selected(object sender, RoutedEventArgs e)
+        {
+            USC.Movement movement = new USC.Movement();
+            grdUSC.Children.Clear();
+            grdUSC.Children.Add(movement);
+        }
+
+        private void btn_BranchsAndMovements_Selected(object sender, RoutedEventArgs e)
+        {
+            USC.BranchsAndMovements branchs = new USC.BranchsAndMovements();
+            grdUSC.Children.Clear();
+            grdUSC.Children.Add(branchs);
+        }
     }
 }

@@ -92,12 +92,46 @@
             </Grid>
             <Grid Height="710" Width="260" HorizontalAlignment="Left" VerticalAlignment="Bottom">
                 <ListView x:Name="lsv" x:FieldModifier="public">
+                    <ListViewItem x:Name="btn_order" Height="70" Selected="btn_order_Selected" >
+                        <Grid Width="230"  VerticalAlignment="Top" HorizontalAlignment="Left">
 
+                            <materialdesign:PackIcon Kind="Paper" Width="40" Height="40" Foreground="#FF218280" VerticalAlignment="Center" Margin="12,0,0,0" Grid.Column="1" Grid.ColumnSpan="2"/>
+                            <TextBlock FontFamily="Hacen Saudi Arabia" Foreground="#FF218280" Text="شاشة الطلبات" VerticalAlignment="Center" FontSize="18" Margin="0,9,8.6,9" HorizontalAlignment="Right" Grid.Column="2"/>
+                        </Grid>
+                    </ListViewItem>
+                    <ListViewItem x:Name="btn_Movement" Height="70" Selected="btn_Movement_Selected" >
+                        <Grid Width="230"  VerticalAlignment="Top" HorizontalAlignment="Left">
+
+                            <materialdesign:PackIcon Kind="Recycle" Width="40" Height="40" Foreground="#FF218280" VerticalAlignment="Center" Margin="12,0,0,0" Grid.Column="1" Grid.ColumnSpan="2"/>
+                            <TextBlock FontFamily="Hacen Saudi Arabia" Foreground="#FF218280" Text="حركة البضاعة" VerticalAlignment="Center" FontSize="18" Margin="0,9,8.6,9" HorizontalAlignment="Right" Grid.Column="2"/>
+                        </Grid>
+                    </ListViewItem>
                     <ListViewItem x:Name="btn_city" Height="70" Selected="btn_city_Selected" >
                         <Grid Width="230"  VerticalAlignment="Top" HorizontalAlignment="Left">
 
                             <materialdesign:PackIcon Kind="CashOnDelivery" Width="40" Height="40" Foreground="#FF218280" VerticalAlignment="Center" Margin="12,0,0,0" Grid.Column="1" Grid.ColumnSpan="2"/>
                             <TextBlock FontFamily="Hacen Saudi Arabia" Foreground="#FF218280" Text="اسعار التوصيل" VerticalAlignment="Center" FontSize="18" Margin="0,9,8.6,9" HorizontalAlignment="Right" Grid.Column="2"/>
+                        </Grid>
+                    </ListViewItem>
+                    <ListViewItem x:Name="btn_delegate" Height="70" Selected="btn_delegate_Selected" >
+                        <Grid Width="230"  VerticalAlignment="Top" HorizontalAlignment="Left">
+
+                            <materialdesign:PackIcon Kind="LorryDelivery" Width="40" Height="40" Foreground="#FF218280" VerticalAlignment="Center" Margin="12,0,0,0" Grid.Column="1" Grid.ColumnSpan="2"/>
+                            <TextBlock FontFamily="Hacen Saudi Arabia" Foreground="#FF218280" Text="ادارة المندوبين" VerticalAlignment="Center" FontSize="18" Margin="0,9,8.6,9" HorizontalAlignment="Right" Grid.Column="2"/>
+                        </Grid>
+                    </ListViewItem>
+                    <ListViewItem x:Name="btnCustomer" Height="70" Selected="btnCustomer_Selected" >
+                        <Grid Width="230"  VerticalAlignment="Top" HorizontalAlignment="Left">
+
+                            <materialdesign:PackIcon Kind="Hospital" Width="40" Height="40" Foreground="#FF218280" VerticalAlignment="Center" Margin="12,0,0,0" Grid.Column="1" Grid.ColumnSpan="2"/>
+                            <TextBlock FontFamily="Hacen Saudi Arabia" Foreground="#FF218280" Text="اضافة زبون" VerticalAlignment="Center" FontSize="18" Margin="0,9,8.6,9" HorizontalAlignment="Right" Grid.Column="2"/>
+                        </Grid>
+                    </ListViewItem>
+                    <ListViewItem x:Name="btn_BranchsAndMovements" Height="70" Selected="btn_BranchsAndMovements_Selected" >
+                        <Grid Width="230"  VerticalAlignment="Top" HorizontalAlignment="Left">
+
+                            <materialdesign:PackIcon Kind="NewBox" Width="40" Height="40" Foreground="#FF218280" VerticalAlignment="Center" Margin="12,0,0,0" Grid.Column="1" Grid.ColumnSpan="2"/>
+                            <TextBlock FontFamily="Hacen Saudi Arabia" Foreground="#FF218280" Text="اضافة حالة جديدة" VerticalAlignment="Center" FontSize="18" Margin="0,9,8.6,9" HorizontalAlignment="Right" Grid.Column="2"/>
                         </Grid>
                     </ListViewItem>
                     <ListViewItem x:Name="btn_users" Height="70" >

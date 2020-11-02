@@ -27,7 +27,7 @@ namespace delivery.USC
         DataTable Dt = new DataTable(); DataTable DtCity = new DataTable();
         Button[] btn = new Button[3]; Button[] btnCity = new Button[3];
         bool isnew = false;
-        UIElement[] txt = new UIElement[5];
+        UIElement[] txt = new UIElement[4];
 
         void usc_Initialize()
         {
@@ -47,7 +47,7 @@ namespace delivery.USC
                 Dt = flag.Fill_DataGrid_join("Select *,ROW_NUMBER() OVER(ORDER BY[ID_Province]) AS RowNum FROM [dbo].[Provinces] where Exist = 'true'");
                 dgvProvince.DataContext = Dt;
 
-                DtCity = flag.Fill_DataGrid_join("SELECT [ID_City],[CityName],[PriceMen],[PriceWomen], ProvinceName,[Days],ROW_NUMBER() OVER(ORDER BY[ID_City]) AS RowNum1 FROM [dbo].[Cities] inner join Provinces on Provinces.ID_Province = Cities.ID_Province where Cities.Exist = 'true'");
+                DtCity = flag.Fill_DataGrid_join("SELECT [ID_City],[CityName],[PriceMen], ProvinceName,[Days],ROW_NUMBER() OVER(ORDER BY[ID_City]) AS RowNum1 FROM [dbo].[Cities] inner join Provinces on Provinces.ID_Province = Cities.ID_Province where Cities.Exist = 'true'");
                 dgvCity.DataContext = DtCity;
 
                 flag.Fill_ComboBox(Dt, cmbProvince, 1);
@@ -233,7 +233,6 @@ namespace delivery.USC
 
                 city.CityName = txtCity.Text;
                 city.PriceMen = Convert.ToDecimal(txtPriceMen.Text);
-                city.PriceWomen = Convert.ToDecimal(txtPriceWomen.Text);
                 city.ID_Province = Convert.ToInt32(Dt.Rows[cmbProvince.SelectedIndex].ItemArray[0]) ;
                 city.Days = txtDays.Text;
                 city.Exist = true;
@@ -263,7 +262,7 @@ namespace delivery.USC
         {
             try
             {
-                flag.Dellete("Cities", "ID_City", Dt, dgvCity);
+                flag.Dellete("Cities", "ID_City", DtCity, dgvCity);
                 usc_Initialize();
             }
             catch (Exception ex)

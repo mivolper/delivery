@@ -66,6 +66,12 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="zxing, Version=0.16.6.0, Culture=neutral, PublicKeyToken=4e88037ac681fe60, processorArchitecture=MSIL">
+      <HintPath>..\packages\ZXing.Net.0.16.6\lib\net47\zxing.dll</HintPath>
+    </Reference>
+    <Reference Include="zxing.presentation, Version=0.16.6.0, Culture=neutral, PublicKeyToken=4e88037ac681fe60, processorArchitecture=MSIL">
+      <HintPath>..\packages\ZXing.Net.0.16.6\lib\net47\zxing.presentation.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -75,6 +81,12 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CReport\Bill.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Bill.rpt</DependentUpon>
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="CReport\Cities.cs">
       <AutoGen>True</AutoGen>
@@ -91,8 +103,26 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Db.dbml</DependentUpon>
     </Compile>
+    <Compile Include="USC\BranchsAndMovements.xaml.cs">
+      <DependentUpon>BranchsAndMovements.xaml</DependentUpon>
+    </Compile>
     <Compile Include="USC\city.xaml.cs">
       <DependentUpon>city.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="USC\customer.xaml.cs">
+      <DependentUpon>customer.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="USC\delegate.xaml.cs">
+      <DependentUpon>delegate.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="USC\Movement.xaml.cs">
+      <DependentUpon>Movement.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="USC\Order.xaml.cs">
+      <DependentUpon>Order.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="USC\StateEdit.xaml.cs">
+      <DependentUpon>StateEdit.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
@@ -112,6 +142,10 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <EmbeddedResource Include="CReport\Bill.rpt">
+      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
+      <LastGenOutput>Bill.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="CReport\Cities.rpt">
       <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
       <LastGenOutput>Cities.cs</LastGenOutput>
@@ -128,6 +162,7 @@
     <None Include="Linq\Db.dbml.layout">
       <DependentUpon>Db.dbml</DependentUpon>
     </None>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -145,7 +180,31 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="USC\BranchsAndMovements.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="USC\city.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="USC\customer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="USC\delegate.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="USC\Movement.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="USC\Order.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="USC\StateEdit.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

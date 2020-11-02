@@ -17,6 +17,7 @@ using System.Data;
 using delivery.USC;
 using delivery.Properties;
 using delivery.Windows;
+using ZXing;
 
 //using PharmaMev.Properties;
 namespace delivery.Flags
@@ -28,7 +29,7 @@ namespace delivery.Flags
         //                                              "; Integrated security = false;" + "User ID =" + Settings.Default.User +
         //                                              ";PassWord =" + Settings.Default.PassWord + "");
 
-        public SqlConnection Con = new SqlConnection(@"server  =.; Database = Delivery_Mev; Integrated Security = true");
+        public SqlConnection Con = new SqlConnection(@"server  =.\SQLEXPRESS; Database = Delivery_Mev; Integrated Security = true");
 
         Linq.DbDataContext Db ;
         SqlDataAdapter da;
@@ -75,7 +76,7 @@ namespace delivery.Flags
             {
                 Cmb.Items.Insert(i, Dt.Rows[i].ItemArray[Dtindex].ToString());
             }
-            Cmb.SelectedIndex = 0;
+           
         }
 
         public void Create_Columns(string[] names, DataTable Dt)
@@ -311,6 +312,13 @@ namespace delivery.Flags
                 }
                 ((TextBox)sender).Text = ((TextBox)sender).Text.Remove(((TextBox)sender).Text.Length - 1);
             }
+        }
+
+        public void Brcode_Maker(string code)
+        {
+            BarcodeWriter barcode = new BarcodeWriter();
+            barcode.Format = BarcodeFormat.CODE_128;
+            barcode.Write(code);
         }
     }
 }

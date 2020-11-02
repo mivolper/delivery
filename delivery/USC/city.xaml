@@ -47,7 +47,6 @@
 
         <TextBox x:Name="txtSearchProvince"  Style="{StaticResource MaterialDesignFloatingHintTextBox}" materialdesign:HintAssist.Hint=" البحث باسم الإقليم" FontFamily="Hacen Saudi Arabia" FontSize="15" Width="200" Height="40" FlowDirection="RightToLeft" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,255,145,0" Grid.Column="2" TextChanged="txtSearchProvince_TextChanged"/>
 
-        <Grid Height="2" Width="430" Background="Black" VerticalAlignment="Bottom" HorizontalAlignment="Right"  Margin="0 0 35 338"/>
         <Grid Background="Black" Height="70" Width="40" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0 0 75 404"></Grid>
         <Grid Background="Black" Height="70" Width="40" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0 0 380 404"></Grid>
         <Grid Background="White" Height="10" Width="50" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0 0 70 446"></Grid>
@@ -80,15 +79,17 @@
                     <DataGridTextColumn Header="الايام" Width="250"  Binding="{Binding Days}" />
                 </DataGrid.Columns>
             </DataGrid>
+            
+
             <Border.Effect>
                 <DropShadowEffect ShadowDepth="6"/>
             </Border.Effect>
+            
         </Border>
 
         <Grid x:Name="grdtxtCity">
-            <TextBox x:Name="txtCity" Style="{StaticResource MaterialDesignFloatingHintTextBox}" materialdesign:HintAssist.Hint="المدينة" FontFamily="Hacen Saudi Arabia" FontSize="18" Width="149" Height="50" FlowDirection="RightToLeft" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,76,559,0" RenderTransformOrigin="0.502,1.36" IsEnabled="False" GotMouseCapture="txtProvince_GotMouseCapture"/>
-            <TextBox x:Name="txtPriceMen"  Style="{StaticResource MaterialDesignFloatingHintTextBox}" materialdesign:HintAssist.Hint="سعر توصيل رجالي" FontFamily="Hacen Saudi Arabia" FontSize="18" Width="142" Height="50" FlowDirection="RightToLeft" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,76,728,0" IsEnabled="False" GotMouseCapture="txtProvince_GotMouseCapture" PreviewTextInput="txtPriceMen_PreviewTextInput"/>
-            <TextBox x:Name="txtPriceWomen"  Style="{StaticResource MaterialDesignFloatingHintTextBox}" materialdesign:HintAssist.Hint="سعر توصيل نسائي" FontFamily="Hacen Saudi Arabia" FontSize="18" Width="146" Height="50" FlowDirection="RightToLeft" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,76,894,0" IsEnabled="False"  GotMouseCapture="txtProvince_GotMouseCapture" PreviewTextInput="txtPriceMen_PreviewTextInput"/>
+            <TextBox x:Name="txtCity" Style="{StaticResource MaterialDesignFloatingHintTextBox}" materialdesign:HintAssist.Hint="المدينة" FontFamily="Hacen Saudi Arabia" FontSize="18" Width="200" Height="50" FlowDirection="RightToLeft" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,76,559,0" RenderTransformOrigin="0.502,1.36" IsEnabled="False" GotMouseCapture="txtProvince_GotMouseCapture"/>
+            <TextBox x:Name="txtPriceMen"  Style="{StaticResource MaterialDesignFloatingHintTextBox}" materialdesign:HintAssist.Hint="سعر التوصيل" FontFamily="Hacen Saudi Arabia" FontSize="18" Width="142" Height="50" FlowDirection="RightToLeft" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,76,803,0" IsEnabled="False" GotMouseCapture="txtProvince_GotMouseCapture" PreviewTextInput="txtPriceMen_PreviewTextInput"/>
             <ComboBox  x:Name="cmbProvince" Style="{StaticResource MaterialDesignFloatingHintComboBox}"   materialdesign:HintAssist.Hint= "الإقليم" Width="150" Height="50" HorizontalAlignment="Left" VerticalAlignment="Top" FontFamily="Hacen Saudi Arabia"  Margin="591,150,0,0" Background="White" FlowDirection="RightToLeft" Foreground="Black" FontSize="18"  IsEnabled="False" />
             <TextBox  x:Name="txtDays"  Style="{StaticResource MaterialDesignFloatingHintTextBox}" materialdesign:HintAssist.Hint="الايام" FontFamily="Hacen Saudi Arabia" FontSize="18" Width="310" Height="50" FlowDirection="RightToLeft" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,151,730,0" IsEnabled="False" GotMouseCapture="txtProvince_GotMouseCapture"  />
         </Grid>
@@ -123,7 +124,6 @@
         <Grid Background="Black" Height="10" Width="70" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0 100 460 0"></Grid>
         <Grid Background="Black" Height="10" Width="70" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0 0 460 85"></Grid>
         <Grid Background="Black" Height="10" Width="70" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0 0 460 65"></Grid>
-        <Grid Height="2" Width="740" Background="Black" VerticalAlignment="Bottom" HorizontalAlignment="Left"  Margin="30 0 0 338"/>
-
+      
     </Grid>
 </UserControl>
