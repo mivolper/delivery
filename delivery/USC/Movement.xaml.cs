@@ -32,6 +32,7 @@ namespace delivery.USC
         SqlDataAdapter da = new SqlDataAdapter();
         Button[] btn = new Button[3];
         bool isnew = false;
+        int test = 0;
         public Movement()
         {
             InitializeComponent();
@@ -43,6 +44,7 @@ namespace delivery.USC
             flag.Fill_ComboBox(DtState, cmbState, 1);
             Dt = flag.Fill_DataGrid_join("Select *,ROW_NUMBER() OVER(ORDER BY[ID_Province]) AS RowNum FROM [dbo].[Provinces] where Exist = 'true'");
             flag.Fill_ComboBox(Dt, cmbProvince, 1);
+
         }
         private void btnAllEdit_Click(object sender, RoutedEventArgs e)
         {
