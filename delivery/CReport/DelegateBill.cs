@@ -16,14 +16,14 @@ namespace delivery.CReport {
     using CrystalDecisions.CrystalReports.Engine;
     
     
-    public class Bill : ReportClass {
+    public class DelegateBill : ReportClass {
         
-        public Bill() {
+        public DelegateBill() {
         }
         
         public override string ResourceName {
             get {
-                return "Bill.rpt";
+                return "DelegateBill.rpt";
             }
             set {
                 // Do nothing
@@ -41,7 +41,7 @@ namespace delivery.CReport {
         
         public override string FullResourceName {
             get {
-                return "delivery.CReport.Bill.rpt";
+                return "delivery.CReport.DelegateBill.rpt";
             }
             set {
                 // Do nothing
@@ -90,7 +90,7 @@ namespace delivery.CReport {
         
         [Browsable(false)]
         [DesignerSerializationVisibilityAttribute(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
-        public CrystalDecisions.Shared.IParameterField Parameter_Customer {
+        public CrystalDecisions.Shared.IParameterField Parameter_Delegate {
             get {
                 return this.DataDefinition.ParameterFields[0];
             }
@@ -98,73 +98,17 @@ namespace delivery.CReport {
         
         [Browsable(false)]
         [DesignerSerializationVisibilityAttribute(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
-        public CrystalDecisions.Shared.IParameterField Parameter_CustomerAddress {
+        public CrystalDecisions.Shared.IParameterField Parameter_Day {
             get {
                 return this.DataDefinition.ParameterFields[1];
-            }
-        }
-        
-        [Browsable(false)]
-        [DesignerSerializationVisibilityAttribute(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
-        public CrystalDecisions.Shared.IParameterField Parameter_CustomerPhone {
-            get {
-                return this.DataDefinition.ParameterFields[2];
-            }
-        }
-        
-        [Browsable(false)]
-        [DesignerSerializationVisibilityAttribute(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
-        public CrystalDecisions.Shared.IParameterField Parameter_Value {
-            get {
-                return this.DataDefinition.ParameterFields[3];
-            }
-        }
-        
-        [Browsable(false)]
-        [DesignerSerializationVisibilityAttribute(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
-        public CrystalDecisions.Shared.IParameterField Parameter_Recipient {
-            get {
-                return this.DataDefinition.ParameterFields[4];
-            }
-        }
-        
-        [Browsable(false)]
-        [DesignerSerializationVisibilityAttribute(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
-        public CrystalDecisions.Shared.IParameterField Parameter_RecipientPhone {
-            get {
-                return this.DataDefinition.ParameterFields[5];
-            }
-        }
-        
-        [Browsable(false)]
-        [DesignerSerializationVisibilityAttribute(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
-        public CrystalDecisions.Shared.IParameterField Parameter_RecipientPhone2 {
-            get {
-                return this.DataDefinition.ParameterFields[6];
-            }
-        }
-        
-        [Browsable(false)]
-        [DesignerSerializationVisibilityAttribute(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
-        public CrystalDecisions.Shared.IParameterField Parameter_RecipientAddress {
-            get {
-                return this.DataDefinition.ParameterFields[7];
-            }
-        }
-        
-        [Browsable(false)]
-        [DesignerSerializationVisibilityAttribute(System.ComponentModel.DesignerSerializationVisibility.Hidden)]
-        public CrystalDecisions.Shared.IParameterField Parameter_Barcode {
-            get {
-                return this.DataDefinition.ParameterFields[8];
             }
         }
     }
     
     [System.Drawing.ToolboxBitmapAttribute(typeof(CrystalDecisions.Shared.ExportOptions), "report.bmp")]
-    public class CachedBill : Component, ICachedReport {
+    public class CachedDelegateBill : Component, ICachedReport {
         
-        public CachedBill() {
+        public CachedDelegateBill() {
         }
         
         [Browsable(false)]
@@ -201,7 +145,7 @@ namespace delivery.CReport {
         }
         
         public virtual CrystalDecisions.CrystalReports.Engine.ReportDocument CreateReport() {
-            Bill rpt = new Bill();
+            DelegateBill rpt = new DelegateBill();
             rpt.Site = this.Site;
             return rpt;
         }

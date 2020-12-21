@@ -24,8 +24,8 @@ namespace delivery.Windows
         DataTable Dt = new DataTable();
         Flags.flags flag = new Flags.flags();
         Linq.DbDataContext Db;
-
-
+        public bool offline = false;
+        public string user = "";
         static void frm_Closed(object sender, EventArgs e)
         {
             frm = null;
@@ -48,6 +48,7 @@ namespace delivery.Windows
             InitializeComponent();
             if (frm == null)
                 frm = this;
+           
         }
 
         private void btn_city_Selected(object sender, RoutedEventArgs e)
@@ -162,6 +163,21 @@ namespace delivery.Windows
             USC.BranchsAndMovements branchs = new USC.BranchsAndMovements();
             grdUSC.Children.Clear();
             grdUSC.Children.Add(branchs);
+        }
+
+        private void btn_users_Selected(object sender, RoutedEventArgs e)
+        {
+            USC.users users = new USC.users();
+            grdUSC.Children.Clear();
+            grdUSC.Children.Add(users);
+
+        }
+
+        private void btn_set_Selected(object sender, RoutedEventArgs e)
+        {
+            USC.setting setting = new USC.setting();
+            grdUSC.Children.Clear();
+            grdUSC.Children.Add(setting);
         }
     }
 }

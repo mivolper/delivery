@@ -1,4 +1,6 @@
-﻿using System;
+﻿using delivery.Linq;
+using delivery.Windows;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -22,35 +24,55 @@ namespace delivery.USC
     /// </summary>
     public partial class Movement : UserControl
     {
+        static public Movement frm;
         Flags.flags flag = new Flags.flags();
-        Linq.DbDataContext Db;
         DataTable Dt = new DataTable();
         DataTable DtState = new DataTable();
         DataTable DtDelegate = new DataTable();
         DataTable DtCity = new DataTable();
         DataTable DtSearch = new DataTable();
-        SqlDataAdapter da = new SqlDataAdapter();
-        Button[] btn = new Button[3];
-        bool isnew = false;
-        int test = 0;
+        SqlConnection Connection = new SqlConnection();
+
         public Movement()
         {
             InitializeComponent();
         }
+
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            DtState = flag.Fill_DataGrid_join("Select *,ROW_NUMBER() OVER(ORDER BY[ID_Movement]) AS RowNum FROM [dbo].[Movements] where Exist = 'true'");
-            cmbState.DataContext = DtState;
-            flag.Fill_ComboBox(DtState, cmbState, 1);
-            Dt = flag.Fill_DataGrid_join("Select *,ROW_NUMBER() OVER(ORDER BY[ID_Province]) AS RowNum FROM [dbo].[Provinces] where Exist = 'true'");
-            flag.Fill_ComboBox(Dt, cmbProvince, 1);
+            try
+            {
+                frm = this;
 
-        }
-        private void btnAllEdit_Click(object sender, RoutedEventArgs e)
-        {
-            USC.StateEdit edit = new USC.StateEdit();
-            grdEdit.Children.Clear();
-            grdEdit.Children.Add(edit);
+                if (MainWindow.frm.offline)
+                {
+                    Connection = flag.SubCon;
+                }
+                else
+                {
+                    Connection = flag.Con;
+                }
+
+                DtState = flag.Fill_DataGrid_join("Select *,ROW_NUMBER() OVER(ORDER BY[ID_Movement]) AS RowNum FROM [dbo].[Movements] where Exist = 'true'");
+                flag.Fill_ComboBox(DtState, cmbState, 1);
+
+                Dt = flag.Fill_DataGrid_join("Select *,ROW_NUMBER() OVER(ORDER BY[ID_Province]) AS RowNum FROM [dbo].[Provinces] where Exist = 'true'");
+                flag.Fill_ComboBox(Dt, cmbProvince, 1);
+
+                DtDelegate = flag.Fill_DataGrid_join("Select  Name FROM[dbo].[Delegates] where Exist = 'true'", flag.SubCon);
+                dgvDelegate.DataContext = DtDelegate;
+
+                DtCity = flag.Fill_DataGrid_join("Select  CityName FROM[dbo].[Cities] where Exist = 'true'");
+                dgvCity.DataContext = DtCity;
+
+                txt_from_date.SelectedDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month,1);
+                txt_to_date.SelectedDate = txt_from_date.SelectedDate.Value.AddMonths(1).AddDays(-1);
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void txtCity_GotMouseCapture(object sender, MouseEventArgs e)
@@ -65,8 +87,6 @@ namespace delivery.USC
                 else
                 {
                     dgvCity.Visibility = Visibility.Visible;
-                    DtCity = flag.Fill_DataGrid_join("Select  CityName FROM[dbo].[Cities] where Exist = 'true'");
-                    dgvCity.DataContext = DtCity;
                 }
             }
             catch (Exception ex)
@@ -80,7 +100,7 @@ namespace delivery.USC
             try
             {
                 DtCity.Clear();
-                DtCity = flag.Fill_DataGrid_join("Select CityName FROM [dbo].[Cities] where Exist = 'true' and CityName like '%'+ '" + txtCity.Text + "' +'%'");
+                DtCity = flag.Fill_DataGrid_join("Select CityName FROM [dbo].[Cities] where Exist = 'true' and CityName like '%'+ N'" + txtCity.Text + "' +'%'");
                 dgvCity.DataContext = DtCity;
                 if (DtCity.Rows.Count > 0)
                 {
@@ -125,8 +145,6 @@ namespace delivery.USC
                 else
                 {
                     dgvDelegate.Visibility = Visibility.Visible;
-                    DtDelegate = flag.Fill_DataGrid_join("Select  Name FROM[dbo].[Delegates] where Exist = 'true'");
-                    dgvDelegate.DataContext = DtDelegate;
                 }
             }
             catch (Exception ex)
@@ -140,7 +158,7 @@ namespace delivery.USC
             try
             {
                 DtDelegate.Clear();
-                DtDelegate = flag.Fill_DataGrid_join("Select  Name FROM [dbo].[Delegates] where Exist = 'true' and Name like '%'+ '" + txtDelegate.Text + "' +'%'");
+                DtDelegate = flag.Fill_DataGrid_join("Select  Name FROM [dbo].[Delegates] where Exist = 'true' and Name like '%'+ '" + txtDelegate.Text + "' +'%'",flag.SubCon);
                 dgvDelegate.DataContext = DtDelegate;
                 if (DtDelegate.Rows.Count > 0)
                 {
@@ -149,7 +167,7 @@ namespace delivery.USC
                 }
                 if (txtDelegate.Text == string.Empty)
                 {
-                    DtDelegate = flag.Fill_DataGrid_join("Select  Name FROM[dbo].[Delegates] where Exist = 'true'");
+                    DtDelegate = flag.Fill_DataGrid_join("Select  Name FROM[dbo].[Delegates] where Exist = 'true'",flag.SubCon);
                     dgvDelegate.DataContext = DtDelegate;
 
                 }
@@ -169,7 +187,7 @@ namespace delivery.USC
             }
             catch (Exception ex)
             {
-
+                MessageBox.Show(ex.Message);
             }
         }
 
@@ -245,17 +263,126 @@ namespace delivery.USC
 
         private void btn_Search_Click(object sender, RoutedEventArgs e)
         {
-            try
-            {
+            try 
+            { 
+                bool Exist = true;
+                if (((Button)sender).Name == "btn_Search") Exist = false;
+                decimal sumDelivery = 0;
+                decimal sumPackage = 0;
+                string select;
+                select = "SELECT Orders.ID_Order, [Barcode],[Customer],[CustomerPhone],[Recipient],[RecipientPhone1],[RecipientPhone2],Orders.[Address],[PackagePrice],[PackageNumber],[DeliveryPrice],[TotalPrice],[State],FORMAT (Orders.[Date], 'yyyy-MM-dd') as [Date] ,Orders.[Note],[User],[City],[Delegate], Province,FORMAT (Orders.[DateState], 'yyyy-MM-dd') as [DateState] , ROW_NUMBER() OVER(ORDER BY[date]) AS RowNum,('" + Exist + "') as Exist,isnull((select Name from AspNetUsers where Code = Orders.Customer),'') as Name FROM [dbo].Orders   where Orders.Exist = 'true'";
                 DtSearch.Clear();
-                da = new SqlDataAdapter("Select  [ID_Order],[Barcode],[Customer],[CustomerPhone],[Recipient],[RecipientPhone1],[RecipientPhone2],[Address],[PackagePrice],[PackageNumber],[DeliveryPrice],[TotalPrice],[State],FORMAT (Orders.[Date], 'yyyy-MM-dd') as [Date]  ,[Note],[users],[Exist],[HasEdit],[WhoIsEdit],[City],[Delegate] , ROW_NUMBER() OVER(ORDER BY[ID_Order]) AS RowNum FROM [dbo].[Orders] where Exist = 'true' and State like '%'+'" + cmbState.Text + "'+'%' and Delegate like '%'+'" + txtDelegate.Text + "'+'%' and City like '%'+'" + txtCity.Text + "'+'%' ", flag.Con);
-                da.Fill(DtSearch);
+
+                if (cbxDate.IsChecked == true && txt_from_date.Text!=string.Empty && txt_to_date.Text != string.Empty)
+                {
+                    DtSearch = flag.Fill_DataGrid_join(select + "  and State like '%'+N'" + cmbState.Text + "'+'%' and Delegate like '%'+N'" + txtDelegate.Text + "'+'%' and City like '%'+N'" + txtCity.Text + "'+'%' and Province like '%'+N'" + cmbProvince.Text + "'+'%' and Barcode like '%'+N'" + txtBarcode.Text + "'+'%' and Customer like '%'+N'" + txtCode.Text + "'+'%' and DateState Between '" + txt_from_date.Text + "' and '" + txt_to_date.Text + "'", Connection);
+                }
+                else
+                {
+                    DtSearch = flag.Fill_DataGrid_join(select + "  and State like '%'+N'" + cmbState.Text + "'+'%' and Delegate like '%'+N'" + txtDelegate.Text + "'+'%' and City like '%'+N'" + txtCity.Text + "'+'%' and Province like '%'+N'" + cmbProvince.Text + "'+'%' and Barcode like '%'+N'" + txtBarcode.Text + "'+'%' and Customer like '%'+N'" + txtCode.Text + "'+'%' ", Connection);
+                }
+
                 dgvMovement.DataContext = DtSearch;
+                for (int i = 0; i < DtSearch.Rows.Count; i++)
+                {
+                    sumDelivery += Convert.ToDecimal(DtSearch.Rows[i].ItemArray[10]) ;
+
+                }
+                for (int i = 0; i < DtSearch.Rows.Count; i++)
+                {
+                    sumPackage += Convert.ToDecimal(DtSearch.Rows[i].ItemArray[8]);
+
+                }
+
+                txtTotalOrder.Text = DtSearch.Rows.Count.ToString();
+                txtTotalDelivery.Text = sumDelivery.ToString();
+                txtTotalPackage.Text = sumPackage.ToString();
+
+                if (MainWindow.frm.offline && Dt.Rows.Count > 0)
+                {
+                    btnPublish.IsEnabled = true;
+                }
+
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
+        }
+
+        private void cbxBarcode_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                txtBarcode.IsEnabled = (bool)cbxBarcode.IsChecked;
+                txtBarcode.Text = "";
+             
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void cbxCode_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                txtCode.IsEnabled = (bool)cbxCode.IsChecked;
+                txtCode.Text = "";
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void btnEdit_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                StateEdit edit = new StateEdit();
+                
+                flag.Create_Columns(edit.Dt, "BarCode", "RecipientPhone1", "RecipientPhone2", "TotalPrice","City","DateState","RowNum","Name");
+                for (int i = 0; i < dgvMovement.Items.Count ; i++)
+                {
+
+                    if (dgvMovement.Columns[0].GetCellContent(dgvMovement.Items[i]).ToString() == "System.Windows.Controls.CheckBox Content: IsChecked:True")
+                    {
+                        edit.Dt.Rows.Add(DtSearch.Rows[i].ItemArray[1], DtSearch.Rows[i].ItemArray[5], DtSearch.Rows[i].ItemArray[6], DtSearch.Rows[i].ItemArray[11], DtSearch.Rows[i].ItemArray[16], DtSearch.Rows[i].ItemArray[19], DtSearch.Rows[i].ItemArray[20], DtSearch.Rows[i].ItemArray[22]);
+                    }
+                }
+                grdEdit.Children.Clear();
+                grdEdit.Children.Add(edit);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void dgvMovement_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            
+          
+        }
+
+        private void btnPublish_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                SqlCommand cmd = new SqlCommand("INSERT INTO [95.216.93.102].[Delivery_Mev_Db].[dbo].[Orders] ([Barcode],[Customer],[CustomerPhone],[Recipient],[RecipientPhone1],[RecipientPhone2],[Address],[City],[PackagePrice],[PackageNumber],[DeliveryPrice],[TotalPrice],[Delegate],[State],[Date],[User],[Exist],[Note],[DateState],[Province])    SELECT [Barcode],[Customer],[CustomerPhone],[Recipient],[RecipientPhone1],[RecipientPhone2],[Address],[City],[PackagePrice],[PackageNumber],[DeliveryPrice],[TotalPrice],[Delegate],[State],[Date],[User],[Exist],Note,DateState ,Province FROM [dbo].[Orders] where [Barcode] COLLATE DATABASE_DEFAULT not in (select [Barcode] COLLATE DATABASE_DEFAULT from [95.216.93.102].[Delivery_Mev_Db].[dbo].[Orders])", flag.SubCon) { CommandTimeout = 1200 }; ;
+                flag.SubCon.Open();
+                cmd.ExecuteNonQuery();
+                flag.SubCon.Close();
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
         }
     }
 }

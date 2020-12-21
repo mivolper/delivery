@@ -12,7 +12,7 @@ namespace delivery.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.7.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.8.1.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -48,7 +48,8 @@ namespace delivery.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
-        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=.\\SQLEXPRESS;Initial Catalog=Delivery_Mev;Integrated Security=True")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=95.216.93.102;Initial Catalog=Delivery_Mev_Db;User ID=MYS;Password=01" +
+            "5903570Miv")]
         public string Delivery_MevConnectionString1 {
             get {
                 return ((string)(this["Delivery_MevConnectionString1"]));
@@ -64,6 +65,98 @@ namespace delivery.Properties {
             }
             set {
                 this["Brunch"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool delete {
+            get {
+                return ((bool)(this["delete"]));
+            }
+            set {
+                this["delete"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute(".\\SQLEXPRESS")]
+        public string ServerName {
+            get {
+                return ((string)(this["ServerName"]));
+            }
+            set {
+                this["ServerName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Delivery_Mev")]
+        public string DataBase {
+            get {
+                return ((string)(this["DataBase"]));
+            }
+            set {
+                this["DataBase"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("sa")]
+        public string User {
+            get {
+                return ((string)(this["User"]));
+            }
+            set {
+                this["User"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("123")]
+        public string PassWord {
+            get {
+                return ((string)(this["PassWord"]));
+            }
+            set {
+                this["PassWord"] = value;
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=.;Initial Catalog=SubDelivery_mev;Integrated Security=True")]
+        public string SubDelivery_mevConnectionString {
+            get {
+                return ((string)(this["SubDelivery_mevConnectionString"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=95.216.93.102;Initial Catalog=Delivery_Mev_Db;Persist Security Info=T" +
+            "rue;User ID=MYS;Password=015903570Miv")]
+        public string Delivery_Mev_DbConnectionString {
+            get {
+                return ((string)(this["Delivery_Mev_DbConnectionString"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=(localdb)\\mssqllocaldb;Initial Catalog=DeliveryWeb;Integrated Securit" +
+            "y=True")]
+        public string DeliveryWebConnectionString {
+            get {
+                return ((string)(this["DeliveryWebConnectionString"]));
             }
         }
     }

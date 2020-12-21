@@ -18,6 +18,7 @@ using delivery.USC;
 using delivery.Properties;
 using delivery.Windows;
 using ZXing;
+using System.IO;
 
 //using PharmaMev.Properties;
 namespace delivery.Flags
@@ -25,13 +26,16 @@ namespace delivery.Flags
     
     class flags
     {
-        //public SqlConnection Con = new SqlConnection(@"server  =" + Settings.Default.ServerName + "; Database =" + Settings.Default.DataBase +
-        //                                              "; Integrated security = false;" + "User ID =" + Settings.Default.User +
-        //                                              ";PassWord =" + Settings.Default.PassWord + "");
+        public SqlConnection SubCon = new SqlConnection(@"server  =" + Settings.Default.ServerName + "; Database =" + Settings.Default.DataBase +
+                                                      "; Integrated Security = false;" + "User ID =" + Settings.Default.User +
+                                                      ";PassWord =" + Settings.Default.PassWord + "");
 
-        public SqlConnection Con = new SqlConnection(@"server  =.\SQLEXPRESS; Database = Delivery_Mev; Integrated Security = true");
+        public SqlConnection Con = new SqlConnection(Properties.Settings.Default.Delivery_MevConnectionString1);
 
-        Linq.DbDataContext Db ;
+        //public SqlConnection Con = new SqlConnection(@"Data Source=(localdb)\mssqllocaldb;Initial Catalog=DeliveryWeb;Integrated Security=True");
+
+        Linq.DbDataContext Db;
+        
         SqlDataAdapter da;
         Thickness th = new Thickness(25); Thickness Bth = new Thickness(6);
         BrushConverter bc =new BrushConverter();
@@ -52,6 +56,14 @@ namespace delivery.Flags
             return dt;
         }
 
+        public DataTable Fill_DataGrid_join(string procedur,SqlConnection con)
+        {
+            DataTable dt = new DataTable();
+            da = new SqlDataAdapter(procedur, con);
+            da.Fill(dt);
+            con.Close();
+            return dt;
+        }
         public bool Null_Checker(TextBox txt)
         {
             if (txt.Text == "")
@@ -79,7 +91,7 @@ namespace delivery.Flags
            
         }
 
-        public void Create_Columns(string[] names, DataTable Dt)
+        public void Create_Columns(DataTable Dt, params string[] names)
         {
             for (int i = 0; i < names.Length;i++)
             {
@@ -206,11 +218,15 @@ namespace delivery.Flags
                 btn[2].IsEnabled = false;
                 return;
             }
-
-            for (int i = 0; i < btn.Count(); i++)
-            {
-                btn[i].IsEnabled = true;
+            btn[0].IsEnabled = true;
+            btn[1].IsEnabled = true;
+            if (Properties.Settings.Default.delete==true) {
+                btn[2].IsEnabled = true; 
             }
+            //for (int i = 0; i < btn.Count(); i++)
+            //{
+            //    btn[i].IsEnabled = true;
+            //}
 
             for (int i = 0; i < txt.Count(); i++)
             {
@@ -265,10 +281,25 @@ namespace delivery.Flags
             {
                 MessageBox.Show("الرجاء اختيار عنصر من القائمة");
             }
-
-
         }
 
+        public void Dellete(string TableName, string IDColumn, DataTable DT_ID, DataGrid dgv,SqlConnection con)
+        {
+            if (dgv.SelectedIndex != -1)
+            {
+
+                DataTable dt = new DataTable();
+                if (MessageBox.Show("هل تريد حذف العنصر المحدد؟", "حذف", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                {
+                    da = new SqlDataAdapter("Update " + TableName + " Set Exist = 'false' Where " + IDColumn + " = '" + DT_ID.Rows[dgv.SelectedIndex].ItemArray[0].ToString() + "'", con);
+                    da.Fill(dt);
+                }
+            }
+            else
+            {
+                MessageBox.Show("الرجاء اختيار عنصر من القائمة");
+            }
+        }
         public decimal Defrence_Time(DateTime firstTime, DateTime SecondTime,string firstPeriod,string secondPeriod)
         {
             decimal ttx = 0;
@@ -314,11 +345,5 @@ namespace delivery.Flags
             }
         }
 
-        public void Brcode_Maker(string code)
-        {
-            BarcodeWriter barcode = new BarcodeWriter();
-            barcode.Format = BarcodeFormat.CODE_128;
-            barcode.Write(code);
-        }
     }
 }

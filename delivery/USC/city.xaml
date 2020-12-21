@@ -35,7 +35,7 @@
 
         <Grid x:Name="grdbtnProvince">
             <Button x:Name="btnSave"  Content=" حفظ" FontFamily="Hacen Saudi Arabia" Width="100" Height="50" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0 118 340 0" materialdesign:ShadowAssist.ShadowDepth="Depth3" BorderThickness="6" BorderBrush="black"  Background="#FF218280" Foreground="White"  FontSize="20"  Grid.ColumnSpan="3"   materialdesign:ButtonAssist.CornerRadius="10" IsEnabled="False" Click="btnSave_Click"/>
-            <Button  x:Name="btnNew" Content="جديد" FontFamily="Hacen Saudi Arabia" Width="100" Height="50" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0 58 340 0" materialdesign:ShadowAssist.ShadowDepth="Depth3" BorderThickness="6" BorderBrush="black"  Background="#FF218280" Foreground="White" FontSize="20" Grid.Column="2" materialdesign:ButtonAssist.CornerRadius="10" Click="btnNew_Click"/>
+            <Button  x:Name="btnNew" Content="جديد" FontFamily="Hacen Saudi Arabia" Width="100" Height="50" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0 58 340 0" materialdesign:ShadowAssist.ShadowDepth="Depth3" BorderThickness="6" BorderBrush="black"  Background="#FF218280" Foreground="White" FontSize="20" Grid.Column="2" materialdesign:ButtonAssist.CornerRadius="10" IsEnabled="False" Click="btnNew_Click"/>
             <Button  x:Name="btnDelete"  Content="حذف" FontFamily="Hacen Saudi Arabia" Width="100" Height="50" VerticalAlignment="Top"  HorizontalAlignment="Right" Margin="0 178 340 0" materialdesign:ShadowAssist.ShadowDepth="Depth3" BorderThickness="6" BorderBrush="black"  Background="#FF218280" Foreground="White" FontSize="20" Grid.ColumnSpan="3"  materialdesign:ButtonAssist.CornerRadius="10"  IsEnabled="False"  Click="btnDelete_Click"/>
         </Grid>
 
@@ -72,10 +72,9 @@
             <DataGrid x:Name="dgvCity"  Width="705"  FlowDirection="RightToLeft" HorizontalAlignment="Right" Background="White" Margin="0,10,10,10"  FontFamily="Hacen Saudi Arabia"  ItemsSource="{Binding}" AutoGenerateColumns="False" SelectionUnit="FullRow" IsReadOnly="True" SelectionMode="Extended"  SelectionChanged="dgvCity_SelectionChanged">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="الرقم" Width="70" Binding="{Binding RowNum1 }"  />
-                    <DataGridTextColumn Header="المدينة" Width="140"  Binding="{Binding CityName}" />
-                    <DataGridTextColumn Header="سعر توصيل رجالي" Width="125"  Binding="{Binding PriceMen}" />
-                    <DataGridTextColumn Header="سعر توصيل نسائي" Width="125"  Binding="{Binding PriceWomen}" />
-                    <DataGridTextColumn Header="الإقليم" Width="100"  Binding="{Binding ProvinceName}" />
+                    <DataGridTextColumn Header="المدينة" Width="170"  Binding="{Binding CityName}" />
+                    <DataGridTextColumn Header="سعر التوصيل" Width="125"  Binding="{Binding PriceMen}" />
+                    <DataGridTextColumn Header="الإقليم" Width="170"  Binding="{Binding ProvinceName}" />
                     <DataGridTextColumn Header="الايام" Width="250"  Binding="{Binding Days}" />
                 </DataGrid.Columns>
             </DataGrid>

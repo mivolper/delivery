@@ -26,6 +26,7 @@ namespace delivery.USC
         SqlDataAdapter da = new SqlDataAdapter();
         Flags.flags flag = new Flags.flags();
         Linq.DbDataContext Db;
+        
         DataTable Dt = new DataTable();
         Button[] btn = new Button[3];
         bool isnew = false;
@@ -44,7 +45,7 @@ namespace delivery.USC
         {
             try
             {
-                Dt = flag.Fill_DataGrid_join("Select *,ROW_NUMBER() OVER(ORDER BY[ID_delegate]) AS RowNum FROM [dbo].[Delegates] where Exist = 'true'");
+                Dt = flag.Fill_DataGrid_join("Select *,ROW_NUMBER() OVER(ORDER BY[ID_Delegate]) AS RowNum FROM [dbo].[Delegates] where Exist = 'true'",flag.SubCon);
                 dgvDelegate.DataContext = Dt;
 
             }
@@ -91,7 +92,7 @@ namespace delivery.USC
         {
             try
             {
-                Db = new Linq.DbDataContext(flag.Con);
+                Db = new Linq.DbDataContext(flag.SubCon);
                 Linq.Delegate @delegate = new Linq.Delegate();
 
 
@@ -103,7 +104,7 @@ namespace delivery.USC
                         {
                             return;
                         }
-                        @delegate = Db.Delegates.SingleOrDefault(item => item.Exist == true && item.ID_delegate == Convert.ToInt32(Dt.Rows[dgvDelegate.SelectedIndex].ItemArray[0]));
+                        @delegate = Db.Delegates.SingleOrDefault(item => item.Exist == true && item.ID_Delegate == Convert.ToInt32(Dt.Rows[dgvDelegate.SelectedIndex].ItemArray[0]));
                     }
                     else
                     {
@@ -115,7 +116,15 @@ namespace delivery.USC
                 @delegate.Name = txtName.Text;
                 @delegate.Phone1 = txtPhone1.Text;
                 @delegate.Phone2 = txtPhone2.Text;
-                @delegate.Salary =Convert.ToDecimal( txtSalary.Text);
+                if (txtSalary.Text != string.Empty)
+                {
+                    @delegate.Salary = Convert.ToDecimal(txtSalary.Text);
+                  
+                }
+                else
+                {
+                    @delegate.Salary  = Convert.ToDecimal(0);
+                }
                 @delegate.Note = txtNote.Text;
                 @delegate.Exist = true;
 
@@ -146,7 +155,7 @@ namespace delivery.USC
         {
             try
             {
-                flag.Dellete("Delegates", "ID_delegate", Dt, dgvDelegate);
+                flag.Dellete("Delegates", "ID_Delegate", Dt, dgvDelegate,flag.SubCon);
                 usc_Initialize();
             }
             catch (Exception ex)
@@ -162,13 +171,13 @@ namespace delivery.USC
                 Dt.Clear();
                 if (cmbSerch.SelectedIndex == 0)
                 {
-                    da = new SqlDataAdapter("Select *,ROW_NUMBER() OVER(ORDER BY[ID_delegate]) AS RowNum FROM [dbo].[Delegates] where Exist = 'true' and Name like '%'+'" + txtSerch.Text + "'+'%' ", flag.Con);
+                    da = new SqlDataAdapter("Select *,ROW_NUMBER() OVER(ORDER BY[ID_delegate]) AS RowNum FROM [dbo].[Delegates] where Exist = 'true' and Name like '%'+'" + txtSerch.Text + "'+'%' ", flag.SubCon);
                   
                    
                 }
                 if (cmbSerch.SelectedIndex == 1)
                 {
-                    da = new SqlDataAdapter("Select *,ROW_NUMBER() OVER(ORDER BY[ID_delegate]) AS RowNum FROM [dbo].[Delegates] where ( Phone1 like '%'+'" + txtSerch.Text + "'+'%' or Phone2 like '%'+'" + txtSerch.Text + "'+'%')and Exist = 'true'  ", flag.Con);
+                    da = new SqlDataAdapter("Select *,ROW_NUMBER() OVER(ORDER BY[ID_delegate]) AS RowNum FROM [dbo].[Delegates] where ( Phone1 like '%'+'" + txtSerch.Text + "'+'%' or Phone2 like '%'+'" + txtSerch.Text + "'+'%')and Exist = 'true'  ", flag.SubCon);
                 }
                 da.Fill(Dt);
                 dgvDelegate.DataContext = Dt;
@@ -185,7 +194,14 @@ namespace delivery.USC
 
         private void txtName_GotMouseCapture(object sender, MouseEventArgs e)
         {
-            ((TextBox)sender).SelectAll();
+            try
+            {
+                ((TextBox)sender).SelectAll();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void txtPhone1_PreviewTextInput(object sender, TextCompositionEventArgs e)
@@ -200,6 +216,8 @@ namespace delivery.USC
                 MessageBox.Show(ex.Message);
             }
         }
+
+      
     }
-    }
+}
 

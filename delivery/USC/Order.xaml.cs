@@ -1,4 +1,5 @@
-﻿using System;
+﻿using delivery.Windows;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -23,44 +24,69 @@ namespace delivery.USC
     /// </summary>
     public partial class Order : UserControl
     {
+    
         SqlDataAdapter da = new SqlDataAdapter();
         Flags.flags flag = new Flags.flags();
         Linq.DbDataContext Db;
+        SqlConnection Connection = new SqlConnection();
+
         DataTable Dt = new DataTable();
         DataTable DtDelegate = new DataTable();
         DataTable DtCity = new DataTable();
-        DataTable DtDeliveryPrice = new DataTable();
-        DataTable DtCustomer = new DataTable();
-        DataTable DtSerch = new DataTable();
         DataTable DtState = new DataTable();
+        DataTable DtCode = new DataTable();
+
         Button[] btn = new Button[4];
-        bool isnew = false;
         UIElement[] txt = new UIElement[14];
-        private string sql;
+
+        bool isnew = false;
+        public bool selectindx = false;
+        string sql;
+        public string provine = "";
 
         void usc_Initialize()
         {
             Order usc = new Order();
             flag.Initialize_uscgrid(usc);
         }
+
         public Order()
         {
-            InitializeComponent();
+            try
+            {    
+               InitializeComponent();
+            }
+
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             try
             {
-                Dt = flag.Fill_DataGrid_join("Select  [ID_Order],[Barcode],[Customer],[CustomerPhone],[Recipient],[RecipientPhone1],[RecipientPhone2],[Address],[PackagePrice],[PackageNumber],[DeliveryPrice],[TotalPrice],[State],FORMAT (Orders.[Date], 'yyyy-MM-dd') as [Date] ,[Note],[users],[Exist],[HasEdit],[WhoIsEdit],[City],[Delegate] , ROW_NUMBER() OVER(ORDER BY[ID_Order]) AS RowNum FROM [dbo].[Orders] where Exist = 'true'");
+                if (MainWindow.frm.offline)
+                {
+                    Connection = flag.SubCon;
+                }
+                else
+                {
+                    Connection = flag.Con;
+                }
+                Dt = flag.Fill_DataGrid_join("SELECT Orders.ID_Order, [Barcode],[Customer],[CustomerPhone],[Recipient],[RecipientPhone1],[RecipientPhone2],Orders.[Address],[PackagePrice],[PackageNumber],[DeliveryPrice],[TotalPrice],[State],FORMAT (Orders.[Date], 'yyyy-MM-dd') as [Date] ,Orders.[Note],[User],[City],[Delegate], Province,FORMAT (Orders.[DateState], 'yyyy-MM-dd') as [DateState] , ROW_NUMBER() OVER(ORDER BY[date]) AS RowNum,isnull((select Name from AspNetUsers where Code = Orders.Customer),'') as Name FROM [dbo].Orders    where Orders.Exist = 'true' and Date ='" + DateTime.Now.ToString("yyyy-MM-dd") + "'", Connection);
                 dgvOrder.DataContext = Dt;
 
-                DtCity = flag.Fill_DataGrid_join("Select CityName,PriceMen FROM [dbo].[Cities] where Exist = 'true' ");
+                DtCity = flag.Fill_DataGrid_join("Select CityName,PriceMen,ProvinceName FROM [dbo].[Cities] where Cities.Exist = 'true' and Brunsh ='" + Properties.Settings.Default.Brunch + "'", Connection);
                 dgvCity.DataContext = DtCity;
 
+                DtDelegate = flag.Fill_DataGrid_join("Select  Name FROM[dbo].[Delegates] where Exist = 'true'", flag.SubCon);
+                dgvDelegate.DataContext = DtDelegate;
+
                 DtState = flag.Fill_DataGrid_join("Select *,ROW_NUMBER() OVER(ORDER BY[ID_Movement]) AS RowNum FROM [dbo].[Movements] where Exist = 'true'");
-                cmbState.DataContext = DtState;
                 flag.Fill_ComboBox(DtState, cmbState, 1);
+
             }
             catch (Exception ex)
             {
@@ -80,6 +106,8 @@ namespace delivery.USC
                 txtCity.IsEnabled = true;
                 txtDelegate.IsEnabled = true;
                 btn_Serch.IsEnabled = true;
+                DtCode = flag.Fill_DataGrid_join("SELECT  isnull(RIGHT('00000' + CONVERT(VARCHAR, SUBSTRING(Max([Barcode]), 2, 6) + 1), 6),'000001') FROM [dbo].[Codes] ",flag.SubCon);
+                txtBarcode.Text = Properties.Settings.Default.Brunch + DtCode.Rows[0].ItemArray[0].ToString();
             }
             catch (Exception ex)
             {
@@ -101,8 +129,8 @@ namespace delivery.USC
                 txtDelegate.IsEnabled = true;
                 txtCity.Clear();
                 txtDelegate.Clear();
-                txtCity.Text = Dt.Rows[dgvOrder.SelectedIndex].ItemArray[19].ToString();
-                txtDelegate.Text = Dt.Rows[dgvOrder.SelectedIndex].ItemArray[20].ToString();
+                txtCity.Text = Dt.Rows[dgvOrder.SelectedIndex].ItemArray[16].ToString();
+                txtDelegate.Text = Dt.Rows[dgvOrder.SelectedIndex].ItemArray[17].ToString();
                 dgvCity.Visibility = Visibility.Collapsed;
                 dgvDelegate.Visibility = Visibility.Collapsed;
             }
@@ -117,9 +145,19 @@ namespace delivery.USC
         {
             try
             {
-                Db = new Linq.DbDataContext(flag.Con);
+                string note = txtNote.Text;
+                if (MainWindow.frm.offline)
+                {
+                    Db = new Linq.DbDataContext(flag.SubCon);
+                    note += " لم يتم الرفع";
+                }
+                else
+                {
+                    Db = new Linq.DbDataContext(flag.Con);
+                }
                 Linq.Order order = new Linq.Order();
-
+                Linq.DbDataContext CodeDb = new Linq.DbDataContext(flag.SubCon);
+                Linq.Code code = CodeDb.Codes.FirstOrDefault();
 
                 if (!isnew)
                 {
@@ -130,7 +168,6 @@ namespace delivery.USC
                             return;
                         }
                         order = Db.Orders.SingleOrDefault(item => item.Exist == true && item.ID_Order == Convert.ToInt32(Dt.Rows[dgvOrder.SelectedIndex].ItemArray[0]));
-                        order.HasEdit = true;
                     }
                     else
                     {
@@ -154,15 +191,24 @@ namespace delivery.USC
                 order.Delegate = txtDelegate.Text;
                 order.State = cmbState.Text;
                 order.Date = Convert.ToDateTime(txtDate.Text);
-                order.Note = txtNote.Text;
+                order.DateState= Convert.ToDateTime(txtDate.Text);
+                order.Note = note;
                 order.Exist = true;
+                order.User = MainWindow.frm.user;
 
+                if (selectindx == true)
+                {
+                    order.Province = provine;
+                    selectindx = false;
+                }
                 if (isnew)
                 {
                     Db.Orders.InsertOnSubmit(order);
+                    code.Barcode = order.Barcode;
                 }
 
                 Db.SubmitChanges();
+                CodeDb.SubmitChanges();
 
                 if (isnew)
                 {
@@ -181,7 +227,7 @@ namespace delivery.USC
         {
             try
             {
-                flag.Dellete("Orders", "ID_Order", Dt, dgvOrder);
+                flag.Dellete("Orders", "ID_Order", Dt, dgvOrder,Connection);
                 usc_Initialize();
             }
             catch (Exception ex)
@@ -192,7 +238,30 @@ namespace delivery.USC
 
         private void btnPrint_Click(object sender, RoutedEventArgs e)
         {
+            try
+            {
+                //flag.Barcode_Maker(txtBarcode.Text);
+                CReport.Bill bill = new CReport.Bill();
+                bill.SetParameterValue(0, txtCustomer.Text);
+                bill.SetParameterValue(1, txtCustomer.Text);
+                bill.SetParameterValue(2, txtCustomerPhone.Text);
+                bill.SetParameterValue(3, txtPackagePrice.Text);
+                bill.SetParameterValue(4, txtRecipient.Text);
+                bill.SetParameterValue(5, txtRecipientPhone1.Text);
+                bill.SetParameterValue(6, txtRecipientPhone2.Text);
+                bill.SetParameterValue(7, txtAddress.Text);
+                bill.SetParameterValue(8, ( "*" + txtBarcode.Text + "*"));
 
+                CReport.Report_Wnidow rewindow = new CReport.Report_Wnidow();
+                rewindow.ReportVW.ViewerCore.ReportSource = bill;
+                rewindow.Show();
+                bill.PrintToPrinter(1, false, 0, 0);
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void txtSerch_TextChanged(object sender, TextChangedEventArgs e)
@@ -212,7 +281,7 @@ namespace delivery.USC
                     sql = "CustomerPhone";
                 }
                 Dt.Clear();
-                da = new SqlDataAdapter("Select  [ID_Order],[Barcode],[Customer],[CustomerPhone],[Recipient],[RecipientPhone1],[RecipientPhone2],[Address],[PackagePrice],[PackageNumber],[DeliveryPrice],[TotalPrice],[State],FORMAT (Orders.[Date], 'yyyy-MM-dd') as [Date]  ,[Note],[users],[Exist],[HasEdit],[WhoIsEdit],[City],[Delegate] , ROW_NUMBER() OVER(ORDER BY[ID_Order]) AS RowNum FROM [dbo].[Orders] where Exist = 'true' and " + sql + " like '%'+'" + txtSerch.Text + "'+'%'", flag.Con);
+                da = new SqlDataAdapter("SELECT Orders.ID_Order, [Barcode],[Customer],[CustomerPhone],[Recipient],[RecipientPhone1],[RecipientPhone2],[Address],[PackagePrice],[PackageNumber],[DeliveryPrice],[TotalPrice],[State],FORMAT (Orders.[Date], 'yyyy-MM-dd') as [Date] ,[Note],[users],[HasEdit],[WhoIsEdit],[City],[Delegate], ProvinceName , ROW_NUMBER() OVER(ORDER BY[date]) AS RowNum FROM [dbo].[Cities] inner join Provinces on Provinces.ID_Province = Cities.ID_Province  inner join Orders on Orders.ID_City = Cities.ID_City   where Orders.Exist = 'true' and " + sql + " like '%'+'" + txtSerch.Text + "'+'%'", Connection);
                 da.Fill(Dt);
                 dgvOrder.DataContext = Dt;
             }
@@ -224,9 +293,16 @@ namespace delivery.USC
 
         private void txtBarcode_GotMouseCapture(object sender, MouseEventArgs e)
         {
-            ((TextBox)sender).SelectAll();
-            dgvCity.Visibility = Visibility.Collapsed;
-            dgvDelegate.Visibility = Visibility.Collapsed;
+            try
+            {
+                ((TextBox)sender).SelectAll();
+                dgvCity.Visibility = Visibility.Collapsed;
+                dgvDelegate.Visibility = Visibility.Collapsed;
+            }
+            catch (Exception ex)
+            {
+
+            }
         }
 
         private void txtCustomerPhone_PreviewTextInput(object sender, TextCompositionEventArgs e)
@@ -241,29 +317,7 @@ namespace delivery.USC
                 MessageBox.Show(ex.Message);
             }
         }
-
-        private void cmbCustomer_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
-        {
-            try
-            {
-
-                //da = new SqlDataAdapter("Select *,ROW_NUMBER() OVER(ORDER BY[ID_Customer]) AS RowNum FROM [dbo].[Customers] where Exist = 'true' and Name like '%'+'" + txtSerch.Text + "'+'%' ", flag.Con);        
-                // da.Fill(DtSerch);
-                // cmbCustomer.DataContext =DtSerch;
-
-            }
-            catch (Exception ex)
-
-            {
-                MessageBox.Show(ex.Message);
-
-
-            }
-        }
-
-       
-       
-
+     
         private void txtCity_TextChanged(object sender, TextChangedEventArgs e)
        {
             try
@@ -271,7 +325,7 @@ namespace delivery.USC
                 if(dgvCity.SelectedIndex == -1)
                 {
                     DtCity.Clear();
-                    DtCity = flag.Fill_DataGrid_join("Select CityName,PriceMen FROM [dbo].[Cities] where Exist = 'true' and CityName like '%'+ '" + txtCity.Text + "' +'%'");
+                    DtCity = flag.Fill_DataGrid_join("Select CityName,PriceMen, ProvinceName FROM [dbo].[Cities] where [Cities].Exist = 'true' and CityName like '%'+ N'" + txtCity.Text + "' +'%' and Brunsh ='" + Properties.Settings.Default.Brunch + "'", Connection);
                     dgvCity.DataContext = DtCity;
                     if (DtCity.Rows.Count > 0)
                     {
@@ -282,7 +336,7 @@ namespace delivery.USC
                     {
 
                         dgvCity.Visibility = Visibility.Visible;
-                        DtCity = flag.Fill_DataGrid_join("Select CityName,PriceMen FROM [dbo].[Cities] where Exist = 'true' ");
+                        DtCity = flag.Fill_DataGrid_join("Select CityName,PriceMen, ProvinceName FROM [dbo].[Cities]  where [Cities].Exist = 'true' and Brunsh ='" + Properties.Settings.Default.Brunch + "'", Connection);
                         dgvCity.DataContext = DtCity;
                     }
                 }
@@ -320,7 +374,10 @@ namespace delivery.USC
                 if (dgvCity.SelectedIndex == -1) return;
                 txtCity.Text = DtCity.Rows[dgvCity.SelectedIndex].ItemArray[0].ToString();
                 txtDeliveryPrice.Text = DtCity.Rows[dgvCity.SelectedIndex].ItemArray[1].ToString();
+                provine = Convert.ToString(DtCity.Rows[dgvCity.SelectedIndex].ItemArray[2]);
                 dgvCity.Visibility = Visibility.Collapsed;
+                selectindx = true;
+
                 dgvCity.SelectedIndex = -1;
             }
             catch (Exception ex)
@@ -342,8 +399,7 @@ namespace delivery.USC
 
             }
         }
-
-       
+   
         private void txtPackagePrice_TextChanged(object sender, TextChangedEventArgs e)
         {
             try
@@ -359,7 +415,6 @@ namespace delivery.USC
 
         }
 
-
         private void txtDelegate_GotMouseCapture(object sender, MouseEventArgs e)
         {
             try
@@ -372,7 +427,7 @@ namespace delivery.USC
                 else
                 {
                     dgvDelegate.Visibility = Visibility.Visible;
-                    DtDelegate = flag.Fill_DataGrid_join("Select  Name FROM[dbo].[Delegates] where Exist = 'true'");
+                    DtDelegate = flag.Fill_DataGrid_join("Select  Name FROM[dbo].[Delegates] where Exist = 'true'",Connection);
                     dgvDelegate.DataContext = DtDelegate;
                 }
             }
@@ -387,7 +442,7 @@ namespace delivery.USC
             try
             {
                 DtDelegate.Clear();
-                DtDelegate = flag.Fill_DataGrid_join("Select  Name FROM [dbo].[Delegates] where Exist = 'true' and Name like '%'+ '" + txtDelegate.Text + "' +'%'");
+                DtDelegate = flag.Fill_DataGrid_join("Select  Name FROM [dbo].[Delegates] where Exist = 'true' and Name like '%'+ '" + txtDelegate.Text + "' +'%'",flag.SubCon);
                 dgvDelegate.DataContext = DtDelegate;
                 if (DtDelegate.Rows.Count > 0)
                 {
@@ -396,7 +451,7 @@ namespace delivery.USC
                 }
                 if (txtDelegate.Text == string.Empty)
                 {
-                    DtDelegate = flag.Fill_DataGrid_join("Select  Name FROM[dbo].[Delegates] where Exist = 'true'");
+                    DtDelegate = flag.Fill_DataGrid_join("Select  Name FROM[dbo].[Delegates] where Exist = 'true'", flag.SubCon);
                     dgvDelegate.DataContext = DtDelegate;
 
                 }
@@ -406,5 +461,53 @@ namespace delivery.USC
             {
             }
         }
+
+        private void btnPrintBarcode_Click(object sender, RoutedEventArgs e)
+        {
+
+            try
+            {
+                DataTable ReDT = flag.Fill_DataGrid_join("Select  ( '*' + Barcode + '*' ) as Barcode  FROM [dbo].[Orders] where Barcode = 'A000002' ",Connection);
+
+                //flag.Barcode_Maker(txtBarcode.Text);
+                CReport.Barcode bill = new CReport.Barcode();
+                bill.SetDataSource(ReDT);
+                //bill.SetParameterValue(0, ReDT);
+                CReport.Report_Wnidow rewindow = new CReport.Report_Wnidow();
+                rewindow.ReportVW.ViewerCore.ReportSource = bill;
+                rewindow.Show();
+                bill.PrintToPrinter(1, false, 0, 0);
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void btn_Serch_Click(object sender, RoutedEventArgs e)
+        {
+            SUBUSC.CustomerCode code = new SUBUSC.CustomerCode();
+            Flags.StaticFlag.CustomerCode = txtCustomer.Text;
+            Flags.StaticFlag.Order = this;
+
+            GrdCustomerCode.Children.Clear();
+            GrdCustomerCode.Children.Add(code);
+        }
+
+        private void txtDate_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
+        {
+            try
+            {
+                Dt = flag.Fill_DataGrid_join("SELECT Orders.ID_Order, [Barcode],[Customer],[CustomerPhone],[Recipient],[RecipientPhone1],[RecipientPhone2],Orders.[Address],[PackagePrice],[PackageNumber],[DeliveryPrice],[TotalPrice],[State],FORMAT (Orders.[Date], 'yyyy-MM-dd') as [Date] ,Orders.[Note],[User],[City],[Delegate], Province,FORMAT (Orders.[DateState], 'yyyy-MM-dd') as [DateState] , ROW_NUMBER() OVER(ORDER BY[date]) AS RowNum,isnull((select Name from AspNetUsers where Code = Orders.Customer),'') as Name FROM [dbo].Orders    where Orders.Exist = 'true' and Date ='" + txtDate.SelectedDate.Value.ToString("yyyy-MM-dd") + "'", Connection);
+                dgvOrder.DataContext = Dt;
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
     }
 }

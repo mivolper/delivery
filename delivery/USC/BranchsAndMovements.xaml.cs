@@ -142,7 +142,14 @@ namespace delivery.USC
 
         private void txtMovement_GotMouseCapture(object sender, MouseEventArgs e)
         {
-            ((TextBox)sender).SelectAll();
+            try
+            {
+                ((TextBox)sender).SelectAll();
+            }
+            catch (Exception ex)
+            {
+
+            }
         }
 
       

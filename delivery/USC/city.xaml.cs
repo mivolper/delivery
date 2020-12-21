@@ -47,7 +47,7 @@ namespace delivery.USC
                 Dt = flag.Fill_DataGrid_join("Select *,ROW_NUMBER() OVER(ORDER BY[ID_Province]) AS RowNum FROM [dbo].[Provinces] where Exist = 'true'");
                 dgvProvince.DataContext = Dt;
 
-                DtCity = flag.Fill_DataGrid_join("SELECT [ID_City],[CityName],[PriceMen], ProvinceName,[Days],ROW_NUMBER() OVER(ORDER BY[ID_City]) AS RowNum1 FROM [dbo].[Cities] inner join Provinces on Provinces.ID_Province = Cities.ID_Province where Cities.Exist = 'true'");
+                DtCity = flag.Fill_DataGrid_join("SELECT [ID_City],[CityName],[PriceMen], ProvinceName,[Days],ROW_NUMBER() OVER(ORDER BY[ID_City]) AS RowNum1 FROM [dbo].[Cities] where Cities.Exist = 'true' and Brunsh ='" + Properties.Settings.Default.Brunch + "'");
                 dgvCity.DataContext = DtCity;
 
                 flag.Fill_ComboBox(Dt, cmbProvince, 1);
@@ -79,6 +79,7 @@ namespace delivery.USC
         {
             try
             {
+                return;
                 flag.grd_SelectionChaneged(btn, grdbtnProvince, Dt, dgvProvince.SelectedIndex, txtProvince);
                 if (dgvProvince.SelectedIndex == -1) return;
                 isnew = false;
@@ -212,7 +213,10 @@ namespace delivery.USC
             try
             {
                 Db = new Linq.DbDataContext(flag.Con);
+                Linq.DbDataContext subDb = new Linq.DbDataContext(flag.SubCon);
+
                 Linq.City city = new Linq.City();
+                Linq.City subcity = new Linq.City();
 
                 if (!isnew)
                 {
@@ -222,7 +226,9 @@ namespace delivery.USC
                         {
                             return;
                         }
-                        city = Db.Cities.SingleOrDefault(item => item.Exist == true && item.ID_City == Convert.ToInt32(DtCity.Rows[dgvCity.SelectedIndex].ItemArray[0]));
+                        city = Db.Cities.SingleOrDefault(item => item.Exist == true && item.ID_City == Convert.ToInt32(DtCity.Rows[dgvCity.SelectedIndex].ItemArray[0]) && item.Brunsh == Properties.Settings.Default.Brunch);
+                        subcity = subDb.Cities.SingleOrDefault(item => item.Exist == true && item.CityName == Convert.ToString(DtCity.Rows[dgvCity.SelectedIndex].ItemArray[1]) && item.Brunsh == Properties.Settings.Default.Brunch);
+
                     }
                     else
                     {
@@ -231,18 +237,23 @@ namespace delivery.USC
                     }
                 }
 
-                city.CityName = txtCity.Text;
-                city.PriceMen = Convert.ToDecimal(txtPriceMen.Text);
-                city.ID_Province = Convert.ToInt32(Dt.Rows[cmbProvince.SelectedIndex].ItemArray[0]) ;
-                city.Days = txtDays.Text;
-                city.Exist = true;
+                city.CityName = subcity.CityName = txtCity.Text;
+                city.PriceMen = subcity.PriceMen = Convert.ToDecimal(txtPriceMen.Text);
+                city.ID_Province = subcity.ID_Province = Convert.ToInt32(Dt.Rows[cmbProvince.SelectedIndex].ItemArray[0]) ;
+                city.Days = subcity.Days = txtDays.Text;
+                city.Exist = subcity.Exist = true;
+                city.Brunsh = subcity.Brunsh = Properties.Settings.Default.Brunch;
+                city.ProvinceName = subcity.ProvinceName = cmbProvince.Text;
 
                 if (isnew)
                 {
                     Db.Cities.InsertOnSubmit(city);
+                    subDb.Cities.InsertOnSubmit(subcity);
                 }
 
                 Db.SubmitChanges();
+
+                subDb.SubmitChanges();
 
                 if (isnew)
                 {
@@ -262,7 +273,13 @@ namespace delivery.USC
         {
             try
             {
+                Db = new Linq.DbDataContext(flag.SubCon);
+                Linq.City subcity = Db.Cities.SingleOrDefault(item => item.Exist == true && item.CityName == Convert.ToString(DtCity.Rows[dgvCity.SelectedIndex].ItemArray[1]) && item.Brunsh == Properties.Settings.Default.Brunch);
+                subcity.Exist = false;
+                Db.SubmitChanges();
+
                 flag.Dellete("Cities", "ID_City", DtCity, dgvCity);
+
                 usc_Initialize();
             }
             catch (Exception ex)
@@ -275,11 +292,10 @@ namespace delivery.USC
         {
             try
             {
-                DataTable ReDT = flag.Fill_DataGrid_join("SELECT [CityName],[PriceMen],[PriceWomen], ProvinceName,[Days],ROW_NUMBER() OVER(ORDER BY[ID_City]) AS RowNum1 FROM [dbo].[Cities] inner join Provinces on Provinces.ID_Province = Cities.ID_Province where Cities.Exist = 'true'");
+                DataTable ReDT = flag.Fill_DataGrid_join("SELECT [CityName],[PriceMen], ProvinceName,[Days],ROW_NUMBER() OVER(ORDER BY[ID_City]) AS RowNum1 FROM [dbo].[Cities] inner join Provinces on Provinces.ID_Province = Cities.ID_Province where Cities.Exist = 'true'");
 
                 CReport.Cities Bill = new CReport.Cities();
                 Bill.SetDataSource(ReDT);
-                Bill.SetParameterValue(0, Properties.Settings.Default.CompanyName);
                 CReport.Report_Wnidow rewindow = new CReport.Report_Wnidow();
                 rewindow.ReportVW.ViewerCore.ReportSource = Bill;
                 rewindow.Show();
@@ -295,7 +311,7 @@ namespace delivery.USC
         {
             try
             {
-                Dt = flag.Fill_DataGrid_join("SELECT [ID_City],[CityName],[PriceMen],[PriceWomen], ProvinceName,[Days],ROW_NUMBER() OVER(ORDER BY[ID_City]) AS RowNum1 FROM [dbo].[Cities] inner join Provinces on Provinces.ID_Province = Cities.ID_Province where Cities.Exist = 'true' and CityName like '%'+ '" + txtSearchCity.Text + "' +'%'");
+                Dt = flag.Fill_DataGrid_join("SELECT [ID_City],[CityName],[PriceMen], ProvinceName,[Days],ROW_NUMBER() OVER(ORDER BY[ID_City]) AS RowNum1 FROM [dbo].[Cities] inner join Provinces on Provinces.ID_Province = Cities.ID_Province where Cities.Exist = 'true' and CityName like '%'+ '" + txtSearchCity.Text + "' +'%'");
 
                 dgvCity.DataContext = Dt;
             }

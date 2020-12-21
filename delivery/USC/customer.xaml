@@ -31,6 +31,7 @@
         </Border>
 
         <ComboBox x:Name="cmbSerch" SelectedIndex="0" Style="{StaticResource MaterialDesignFloatingHintComboBox}" Width="200" Height="50" HorizontalAlignment="Right" FontFamily="Hacen Saudi Arabia" VerticalAlignment="Top" Margin="0,94,760,0" Background="White" FlowDirection="RightToLeft" Foreground="Black" FontSize="18" >
+            <ComboBoxItem Content=" البحث بكود الزبون" />
             <ComboBoxItem Content=" البحث باسم الزبون" />
             <ComboBoxItem Content=" البحث برقم الهاتف"/>
         </ComboBox>
@@ -43,7 +44,8 @@
             <DataGrid  x:Name="dgvCustomer"  FlowDirection="RightToLeft" HorizontalAlignment="Right" Background="White" Margin="15 10 20 0"  FontFamily="Hacen Saudi Arabia"  ItemsSource="{Binding}" AutoGenerateColumns="False" SelectionUnit="FullRow" IsReadOnly="True" SelectionMode="Extended" SelectionChanged="dgvCustomer_SelectionChanged">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="الرقم" Width="70" Binding="{Binding RowNum}"/>
-                    <DataGridTextColumn Header="اسم الزبون" Width="300"  Binding="{Binding Name}"/>
+                    <DataGridTextColumn Header="كود الزبون" Width="100"  Binding="{Binding Code}"/>
+                    <DataGridTextColumn Header="اسم الزبون" Width="200"  Binding="{Binding Name}"/>
                     <DataGridTextColumn Header="رقم الهاتف الاول" Width="200"  Binding="{Binding  Phone1}" />
                     <DataGridTextColumn Header="رقم الهاتف الثاني" Width="200"  Binding="{Binding  Phone2}"/>
                     <DataGridTextColumn Header="العنوان" Width="200"  Binding="{Binding  Address}"/>
@@ -56,7 +58,7 @@
         <TextBlock Text="اضافة زبون" FlowDirection="RightToLeft" FontFamily="Hacen Saudi Arabia" FontSize="22" Foreground="#FF218280" Margin="0,60,510,0" Width="150" Height="40" HorizontalAlignment="Right" VerticalAlignment="Top"/>
         <Grid x:Name="grdtxt" Grid.ColumnSpan="2" Margin="0,0,0,0.2">
             <TextBox  x:Name="txtName" Style="{StaticResource MaterialDesignFloatingHintTextBox}" materialdesign:HintAssist.Hint="اسم الزبون" FontFamily="Hacen Saudi Arabia" FontSize="18" Width="250" Height="50" FlowDirection="RightToLeft" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,75,328,0" IsEnabled="False" GotMouseCapture="txtName_GotMouseCapture"/>
-            <TextBox  x:Name="txtCustomer" Style="{StaticResource MaterialDesignFloatingHintTextBox}" materialdesign:HintAssist.Hint="كود الزبون" FontFamily="Hacen Saudi Arabia" FontSize="18" Width="200" Height="50" FlowDirection="RightToLeft" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,75,90,0" IsEnabled="False" GotMouseCapture="txtName_GotMouseCapture" />
+            <TextBox  x:Name="txtCode" Style="{StaticResource MaterialDesignFloatingHintTextBox}" materialdesign:HintAssist.Hint="كود الزبون" FontFamily="Hacen Saudi Arabia" FontSize="18" Width="200" Height="50" FlowDirection="RightToLeft" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,75,90,0" IsEnabled="False" IsReadOnly="True"  />
             <TextBox x:Name="txtPhone1" Style="{StaticResource MaterialDesignFloatingHintTextBox}" materialdesign:HintAssist.Hint="رقم الهاتف الاول" FontFamily="Hacen Saudi Arabia" FontSize="18" Width="200" Height="50" FlowDirection="RightToLeft" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,145,90,0" IsEnabled="False" GotMouseCapture="txtName_GotMouseCapture" PreviewTextInput="txtPhone1_PreviewTextInput" RenderTransformOrigin="0.548,-0.392"/>
             <TextBox x:Name="txtPhone2" Style="{StaticResource MaterialDesignFloatingHintTextBox}" materialdesign:HintAssist.Hint="رقم الهاتف الثاني" FontFamily="Hacen Saudi Arabia" FontSize="18" Width="200" Height="50" FlowDirection="RightToLeft" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,145,328,0" IsEnabled="False" GotMouseCapture="txtName_GotMouseCapture" PreviewTextInput="txtPhone1_PreviewTextInput"/>
             <TextBox x:Name="txtAddress" Style="{StaticResource MaterialDesignFloatingHintTextBox}" materialdesign:HintAssist.Hint="العنوان" FontFamily="Hacen Saudi Arabia" FontSize="18" Width="400" Height="50" FlowDirection="RightToLeft" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,210,90,0" IsEnabled="False" GotMouseCapture="txtName_GotMouseCapture"/>
